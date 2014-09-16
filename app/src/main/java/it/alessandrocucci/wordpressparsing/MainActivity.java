@@ -178,7 +178,7 @@ public class MainActivity extends ListActivity {
                     if (matcher.find()) {
                         int matchStart = matcher.start(1);
                         int matchEnd = matcher.end();
-                        // now you have the offsets of a URL match
+
                         s = s.substring(matchStart, matchEnd);
                         images[i] = s;
 
