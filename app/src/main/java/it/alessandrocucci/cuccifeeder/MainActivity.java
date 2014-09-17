@@ -1,4 +1,4 @@
-package it.alessandrocucci.wordpressparsing;
+package it.alessandrocucci.cuccifeeder;
 
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -37,10 +40,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 
+
+
 public class MainActivity extends ListActivity {
 
-    public final int MAX_POST = 10; //Qui devi inserire il numero massimo di post che vuoi visualizzare
-    public final String URL_FEED = "URL_DEL_SITO";
+    public int MAX_POST = 10; //Qui devi inserire il numero massimo di post che vuoi visualizzare
+    public String URL_FEED = "URL_DEL_SITO";
+    public String NAME_FEED;
 
 
 
@@ -92,6 +98,15 @@ public class MainActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+
+            URL_FEED = extras.getString("GAME_URL");
+            NAME_FEED = extras.getString("GAME_NAME");
+        }
+
+        this.setTitle(NAME_FEED);
+
         new ParseData().execute();
         adapter = new MyCustomAdapter(this, R.layout.list_row, links);
         setListAdapter(adapter);
@@ -127,6 +142,36 @@ public class MainActivity extends ListActivity {
             default:
                 return null;
         }
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+
+                new ParseData().execute();
+                adapter = new MyCustomAdapter(this, R.layout.list_row, links);
+                setListAdapter(adapter);
+                ListView lv = getListView();
+                lv.setDivider(null);
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
 
@@ -155,6 +200,8 @@ public class MainActivity extends ListActivity {
 
                 NodeList nodes = doc.getElementsByTagName("item");
 
+                if (nodes.getLength() < MAX_POST) MAX_POST =  nodes.getLength();
+
                 for(int i=0;i<MAX_POST;i++) {
                     Element element = (Element)nodes.item(i);
 
@@ -175,16 +222,11 @@ public class MainActivity extends ListActivity {
 
                     String s = getElementValue(element, "description");
                     Matcher matcher = urlPattern.matcher(s);
-                    if (matcher.find()) {
-                        int matchStart = matcher.start(1);
-                        int matchEnd = matcher.end();
-
-                        s = s.substring(matchStart, matchEnd);
-                        images[i] = s;
-
+                    while (matcher.find())
+                    {
+                        String urlimage=matcher.group(1);
+                        images[i] = urlimage.toString();
                     }
-
-
 
                 }
 
@@ -224,9 +266,7 @@ public class MainActivity extends ListActivity {
 
 
     private static final Pattern urlPattern = Pattern.compile(
-            "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
-                    + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
-                    + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            ".*<img[^>]*src=\"([^\"]*)",Pattern.CASE_INSENSITIVE);
+
 }
 

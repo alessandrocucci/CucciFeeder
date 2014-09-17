@@ -5,6 +5,9 @@
         <!-- Customize your theme here. -->
     </style>
 
-
+    <style name="FeedRowStyle" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_marginLeft">5dip</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
 
 </resources>

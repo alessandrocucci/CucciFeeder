@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Wordpress Parser</string>
+    <string name="app_name">Cucci Feeder</string>
+    <string name="yes">Elimina</string>
+    <string name="no">Annulla</string>
 
 
 </resources>
