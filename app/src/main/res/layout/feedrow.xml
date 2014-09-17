@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    >
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingRight="15dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_card"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/feedName"
+        style="@style/FeedRowStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_weight="1"
+        android:text="Nome Feed"
+        android:layout_centerVertical="true"/>
+        
+    <ImageButton android:id="@+id/viewFeedButton"
+        android:layout_height="50dp"
+        android:layout_width="50dp"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        android:layout_toLeftOf="@+id/deleteFeedButton"
+        android:src="@drawable/go" />
+        
+    <ImageButton android:id="@+id/deleteFeedButton"
+        android:layout_height="50dp"
+        android:layout_width="50dp"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        android:layout_toLeftOf="@+id/deleteFeedButton"
+        android:src="@drawable/delete"
+        android:layout_alignParentRight="true"
+            />
+
+</RelativeLayout>
+    </FrameLayout>
