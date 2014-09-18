@@ -61,11 +61,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.insert(TABLE_FEEDS, null, values);
         values.clear();
 
-        //Aggiungiamo pure Wired.com
-        values.put(KEY_NAME, "Wired.com");
-        values.put(KEY_URL, "http://wired.com/feed/");
-        db.insert(TABLE_FEEDS, null, values);
-        values.clear();
+
 
 	}
 

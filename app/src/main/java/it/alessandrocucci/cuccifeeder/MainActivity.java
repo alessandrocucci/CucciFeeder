@@ -32,6 +32,7 @@ import org.w3c.dom.NodeList;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -55,6 +56,8 @@ public class MainActivity extends ListActivity {
     String[] links;
     String[] images;
 
+    ArrayList<String> mylinks;
+
     private ProgressDialog prgDialog;
 
     public static final int progress_bar_type = 0;
@@ -67,7 +70,7 @@ public class MainActivity extends ListActivity {
 
 
         public MyCustomAdapter(Context context, int textViewResourceId,
-                               String[] objects) {
+                               ArrayList<String> objects) {
             super(context, textViewResourceId, objects);
 
         }
@@ -104,6 +107,9 @@ public class MainActivity extends ListActivity {
         links = new String[MAX_POST];
         images = new String[MAX_POST];
 
+        mylinks = new ArrayList<String>();
+
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
 
@@ -114,7 +120,7 @@ public class MainActivity extends ListActivity {
         this.setTitle(NAME_FEED);
 
         new ParseData().execute();
-        adapter = new MyCustomAdapter(this, R.layout.list_row, links);
+        adapter = new MyCustomAdapter(this, R.layout.list_row, mylinks);
         setListAdapter(adapter);
         ListView lv = getListView();
         lv.setDivider(null);
@@ -167,7 +173,7 @@ public class MainActivity extends ListActivity {
             case R.id.action_refresh:
 
                 new ParseData().execute();
-                adapter = new MyCustomAdapter(this, R.layout.list_row, links);
+                adapter = new MyCustomAdapter(this, R.layout.list_row, mylinks);
                 setListAdapter(adapter);
                 ListView lv = getListView();
                 lv.setDivider(null);
@@ -215,6 +221,7 @@ public class MainActivity extends ListActivity {
                     titles[i] = getElementValue(element,"title");
 
                     links[i] = getElementValue(element,"link");
+                    mylinks.add(links[i]);
 
                     String format = "EEE, dd MMM yyyy kk:mm:ss Z";
                     SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss z", Locale.US);
@@ -251,8 +258,8 @@ public class MainActivity extends ListActivity {
         protected void onPostExecute(String file_url) {
 
             dismissDialog(progress_bar_type);
-            links = new String[MAX_POST];
-            adapter = new MyCustomAdapter(MainActivity.this, R.layout.list_row, links);
+
+            adapter = new MyCustomAdapter(MainActivity.this, R.layout.list_row, mylinks);
             setListAdapter(adapter);
             ListView lv = getListView();
             lv.setDivider(null);
