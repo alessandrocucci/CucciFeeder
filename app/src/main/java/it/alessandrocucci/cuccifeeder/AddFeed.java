@@ -3,8 +3,13 @@ package it.alessandrocucci.cuccifeeder;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -28,7 +33,10 @@ public class AddFeed extends Activity {
 
     String feedName, name;
 
-    final private static int DIALOG_LOGIN = 1;
+    final private static int DIALOG_ADD = 1;
+    final private static int DIALOG_SETTING = 2;
+
+    public int MAX_POST = 10;
     
     
     /** Called when the activity is first created. */
@@ -67,7 +75,7 @@ public class AddFeed extends Activity {
 			@Override
 			public void onClick(View arg0) {
 
-                showDialog(DIALOG_LOGIN);
+                showDialog(DIALOG_ADD);
  
 			}
  
@@ -79,12 +87,36 @@ public class AddFeed extends Activity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+
+                showDialog(DIALOG_SETTING);
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    @Override
     protected Dialog onCreateDialog(int id) {
 
         AlertDialog dialogDetails = null;
 
         switch (id) {
-            case DIALOG_LOGIN:
+            case DIALOG_ADD:
                 LayoutInflater inflater = LayoutInflater.from(this);
                 View dialogview = inflater.inflate(R.layout.feedialog, null);
 
@@ -92,6 +124,17 @@ public class AddFeed extends Activity {
                 dialogbuilder.setTitle("Aggiungi Feed");
                 dialogbuilder.setView(dialogview);
                 dialogDetails = dialogbuilder.create();
+
+                break;
+
+            case DIALOG_SETTING:
+                LayoutInflater inflatersetting = LayoutInflater.from(this);
+                View dialogsettingview = inflatersetting.inflate(R.layout.settingdialog, null);
+
+                AlertDialog.Builder dialogbuildersetting = new AlertDialog.Builder(this);
+                dialogbuildersetting.setTitle("Aggiungi Feed");
+                dialogbuildersetting.setView(dialogsettingview);
+                dialogDetails = dialogbuildersetting.create();
 
                 break;
         }
@@ -103,9 +146,9 @@ public class AddFeed extends Activity {
     protected void onPrepareDialog(int id, Dialog dialog) {
 
         switch (id) {
-            case DIALOG_LOGIN:
+            case DIALOG_ADD:
                 final AlertDialog alertDialog = (AlertDialog) dialog;
-                Button loginbutton = (Button) alertDialog
+                Button addbutton = (Button) alertDialog
                         .findViewById(R.id.btn_add);
                 Button cancelbutton = (Button) alertDialog
                         .findViewById(R.id.btn_cancel);
@@ -115,7 +158,7 @@ public class AddFeed extends Activity {
                 final EditText editurl = (EditText) alertDialog
                         .findViewById(R.id.txt_url);
 
-                loginbutton.setOnClickListener(new View.OnClickListener() {
+                addbutton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -155,6 +198,34 @@ public class AddFeed extends Activity {
                         alertDialog.dismiss();
                     }
                 });
+                break;
+
+            case DIALOG_SETTING:
+                final AlertDialog alertSetting = (AlertDialog) dialog;
+                Button okbutton = (Button) alertSetting
+                        .findViewById(R.id.btn_ok);
+
+                final EditText postNumber = (EditText) alertSetting
+                        .findViewById(R.id.txt_number);
+
+                okbutton.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        alertSetting.dismiss();
+                        MAX_POST = Integer.parseInt(postNumber.getText().toString());
+
+                        if (MAX_POST == 0) MAX_POST = 10;
+
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AddFeed.this);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putInt("PostMax",MAX_POST);
+                        editor.apply();
+
+                    }
+                });
+
+
                 break;
         }
     }

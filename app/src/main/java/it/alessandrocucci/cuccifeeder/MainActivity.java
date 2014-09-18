@@ -5,9 +5,11 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,18 +46,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class MainActivity extends ListActivity {
 
-    public int MAX_POST = 10; //Qui devi inserire il numero massimo di post che vuoi visualizzare
     public String URL_FEED = "URL_DEL_SITO";
     public String NAME_FEED;
 
-
-
-    String[] titles = new String[MAX_POST];
-    String[] dates = new String[MAX_POST];
-    String[] links = new String[MAX_POST];
-    String[] images = new String[MAX_POST];
-
-
+    int MAX_POST;
+    String[] titles;
+    String[] dates;
+    String[] links;
+    String[] images;
 
     private ProgressDialog prgDialog;
 
@@ -97,6 +95,14 @@ public class MainActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        MAX_POST = preferences.getInt("PostMax",10);
+
+        titles = new String[MAX_POST];
+        dates = new String[MAX_POST];
+        links = new String[MAX_POST];
+        images = new String[MAX_POST];
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -195,12 +201,12 @@ public class MainActivity extends ListActivity {
                 URL u = new URL(URL_FEED);
                 Document doc = builder.parse(u.openStream());
 
-
-
-
                 NodeList nodes = doc.getElementsByTagName("item");
+                int count = nodes.getLength();
 
-                if (nodes.getLength() < MAX_POST) MAX_POST =  nodes.getLength();
+                if (count < MAX_POST) {
+                    MAX_POST = count;
+                }
 
                 for(int i=0;i<MAX_POST;i++) {
                     Element element = (Element)nodes.item(i);
@@ -245,8 +251,11 @@ public class MainActivity extends ListActivity {
         protected void onPostExecute(String file_url) {
 
             dismissDialog(progress_bar_type);
+            links = new String[MAX_POST];
+            adapter = new MyCustomAdapter(MainActivity.this, R.layout.list_row, links);
             setListAdapter(adapter);
-
+            ListView lv = getListView();
+            lv.setDivider(null);
         }
     }
 
