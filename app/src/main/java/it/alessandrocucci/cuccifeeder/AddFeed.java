@@ -132,7 +132,7 @@ public class AddFeed extends Activity {
                 View dialogsettingview = inflatersetting.inflate(R.layout.settingdialog, null);
 
                 AlertDialog.Builder dialogbuildersetting = new AlertDialog.Builder(this);
-                dialogbuildersetting.setTitle("Aggiungi Feed");
+                dialogbuildersetting.setTitle("Numero di Articoli");
                 dialogbuildersetting.setView(dialogsettingview);
                 dialogDetails = dialogbuildersetting.create();
 
